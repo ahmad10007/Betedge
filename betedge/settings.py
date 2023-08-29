@@ -207,11 +207,8 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static", "/var/www/static/",]
-# Set the directory where collectstatic will gather static files for deployment
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# Default primary key field type
+STATICFILES_DIRS = [BASE_DIR / "static"] # new
+STATIC_ROOT = BASE_DIR / "staticfiles" # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

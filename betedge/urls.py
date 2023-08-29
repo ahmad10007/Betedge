@@ -20,6 +20,7 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.documentation import include_docs_urls
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 schema_view = get_schema_view(title='Betedge API',
                               description='Apis to interact with backend ')
@@ -30,4 +31,6 @@ urlpatterns = [
     path("api/", include("app_control.urls")),
     path('schema/', schema_view),
     path('', include_docs_urls(title='Betedge Development API'))
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+urlpatterns += staticfiles_urlpatterns()
+# ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
