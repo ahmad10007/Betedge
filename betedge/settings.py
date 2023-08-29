@@ -41,14 +41,12 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "daphne",
     "django.contrib.staticfiles",
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'rest_framework',
     'rest_framework_swagger',
-    "channels",
     "stripe",
     'corsheaders',
     "betedge",
@@ -84,8 +82,8 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = "betedge.wsgi.application"
-ASGI_APPLICATION = "betedge.asgi.application"
+WSGI_APPLICATION = "betedge.wsgi.application"
+# ASGI_APPLICATION = "betedge.asgi.application"
 CORS_ALLOW_ALL_ORIGINS = True
 # CORS_ALLOW_CREDENTIALS = True
 # To Allow specific domains uncomment the following code and add your donmains
