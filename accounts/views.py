@@ -29,7 +29,9 @@ from accounts.serializers import (UserSerializer,
                                   UserInfoSerializer,
                                   RegisterSerializer,
                                   TransactionSerializer,
-                                  TransactionInfoSerializer
+                                  TransactionInfoSerializer,
+                                  TokensSerializer,
+                                  TokensInfoSerializer
                                 )
 from django.contrib.auth import authenticate
 import logging
@@ -68,31 +70,6 @@ class RegistrationViewSet(viewsets.ModelViewSet):
             return RegisterSerializer
         return RegisterSerializer
     
-    
-    # def create(self, request, *args, **kwargs):
-    #     serializer = RegisterSerializer(data = request.data, context={'request': request})
-    #     if serializer.is_valid():
-    #         return Response(serializer.data, status = status.HTTP_200_OK)
-    #     return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    
-
-# class CardsViewSet(viewsets.ModelViewSet):
-#     serializer_class = RegisterSerializer
-#     permission_classes = (permissions.AllowAny,)
-#     # http_method_names = ['post']
-
-#     queryset = User.objects.filter(is_active=True)
-#     # filterset_fields = ["card_number", "cvc", "card_holder", "user", "expiry_date", 'is_active', 'created_at', 'updated_at']
-#     filterset_fields = []
-
-#     def get_serializer_class(self):
-#         if self.request is None:
-#             return CardsSerializer
-#         elif not self.request.method in SAFE_METHODS:
-#             return CardsSerializer
-#         return CardsSerializer
-
-
 
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
@@ -156,3 +133,21 @@ class VerifyEmailView(generics.GenericAPIView):
             log.error(f"Error on Payment Successful {e}")
             raise ValidationError(f"Error on Payment Successful {e}")
 
+
+
+class TokensViewSet(viewsets.ModelViewSet):
+    serializer_class = TokensSerializer
+    permission_classes = (permissions.AllowAny,)
+    http_method_names = ['get', "retrieve"]
+    # http_method_names = ['retrieve']
+
+    queryset = Tokens.objects.all().order_by('-created_at')
+    filterset_fields = ["user", "id", "created_at", "updated_at"]
+
+    def get_serializer_class(self):
+        if self.request is None:
+            return TokensSerializer
+        elif not self.request.method in SAFE_METHODS:
+            return TokensSerializer
+        return TokensSerializer
+    

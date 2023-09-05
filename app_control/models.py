@@ -17,6 +17,8 @@ from django.utils import timezone
 class Products(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
     title = models.CharField(max_length=255, null=True, blank=True)
+    type = models.CharField(max_length=255, null=True, blank=True)
+    position = models.IntegerField(default= 0, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     source = models.JSONField(null=True, blank=True)
     tokens = models.IntegerField(null=True, blank=True, default=0)

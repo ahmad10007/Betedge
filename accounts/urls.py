@@ -6,13 +6,15 @@ from django.urls import path, include
 from accounts.views import (RegistrationViewSet, 
                             TransactionViewSet, 
                             PaymentSuccessful,
-                            VerifyEmailView)
+                            VerifyEmailView,
+                            TokensViewSet)
 from .serializers import CustomJWTSerializer, CustomTokenVerifySerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView
 
 router = routers.DefaultRouter()
 router.register(r'register', RegistrationViewSet, 'register')
 router.register(r'transaction', TransactionViewSet, 'transaction')
+router.register(r'tokens', TokensViewSet, 'tokens')
 # router.register(r'cards', CardsViewSet, 'cards')
 
 

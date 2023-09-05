@@ -19,20 +19,32 @@ import stripe
 import json
 from django.http import HttpRequest
 from app_control.models import (Products,)
-from accounts.models import (User, Transaction)
+from accounts.models import (User, Transaction, Tokens)
 
 log = logging.getLogger("main")
 
 class UserSerializer(serializers.ModelSerializer):
+    tokens = serializers.SerializerMethodField(read_only=True)
+    def get_tokens(self, obj):
+        if obj.tokens_set.exists():
+            return obj.tokens_set.first().count
+        return 0
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name')
+        fields = ('id', 'email', 'first_name', 'last_name', "tokens")
 
 class UserInfoSerializer(serializers.ModelSerializer):
+
+    tokens = serializers.SerializerMethodField(read_only=True)
+    def get_tokens(self, obj):
+        if obj.tokens_set.exists():
+            return obj.tokens_set.first().count
+        return 0
+
     class Meta:
         model = User
         depth = 1
-        fields = ('id', 'email', 'first_name', 'last_name')
+        fields = ('id', 'email', 'first_name', 'last_name', "tokens")
 
 
 
@@ -43,11 +55,15 @@ class CustomJWTSerializer(TokenObtainPairSerializer):
 
         # Authenticate user using email and password
         user = authenticate(request=self.context["request"], email=email, password=password)
+
+        
+        if user is None:
+            raise AuthenticationFailed("No such user")
+
+
         if not user.is_verified:
             raise AuthenticationFailed("Please verify your email address to proceed")
             
-        if user is None:
-            raise AuthenticationFailed("No such user")
 
         refresh = self.get_token(user)
         data = super().validate(attrs)
@@ -274,6 +290,18 @@ class TransactionSerializer(serializers.ModelSerializer):
 class TransactionInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
+        depth = 1
+        fields = "__all__"
+
+
+class TokensSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tokens
+        fields = "__all__"
+
+class TokensInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tokens
         depth = 1
         fields = "__all__"
 

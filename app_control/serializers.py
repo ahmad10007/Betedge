@@ -53,7 +53,7 @@ class ProductsSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = Products
-        fields = ["id","title", "description", "user", "price", "tokens", "created_at", "updated_at", "is_active"] 
+        fields = ["id","title", "description", "user", "position", "price", "tokens", "created_at", "updated_at", "is_active"] 
             
         
             
@@ -66,12 +66,23 @@ class ProductsInfoSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    response = serializers.SerializerMethodField()
+    # response = serializers.SerializerMethodField()
+    tokens = serializers.SerializerMethodField(read_only = True)
+    coins = serializers.CharField(write_only = True)
     
-    def get_response(self, obj):
-        return obj.response
+    def get_tokens(self, obj):
+        if obj.user.tokens_set.exists():
+            tokens = obj.user.tokens_set.first().count
+            return tokens
+        else:
+            return 0
+
     def create(self, validated_data, *args, **kwargs):
 
+        coins = validated_data.pop("coins", None)
+        
+        print(coins)
+        
         try:
             msg = Message.objects.create(**validated_data)
         except Exception as e:
@@ -83,20 +94,25 @@ class MessageSerializer(serializers.ModelSerializer):
             if tokens.count == 0:
                 msg.delete()
                 raise serializers.ValidationError(f"You have insufficient tokens")
-            else:
-                tokens.count -= 1
-                msg.response = " Message saved Successfully"
+            elif tokens.count > int(coins):
+                tokens.count -= int(coins)
+                # msg.response = " Message saved Successfully"
                 tokens.save()
                 msg.save()
                 return msg
+            else:
+                msg.delete()
+                raise serializers.ValidationError(f"You must have {coins} tokens")
         except Exception as e:
             msg.delete()
             raise serializers.ValidationError(f"You don't have tokens to cosume")
 
     class Meta:
         model = Message
-        fields = "__all__"
-            
+        fields = ["message", "response", "user", "tokens", "coins"]
+        read_only_fields = ["tokens"]
+        write_only_fields = ["coins"]
+
         
             
 class MessageInfoSerializer(serializers.ModelSerializer):
